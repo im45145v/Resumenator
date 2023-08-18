@@ -1,6 +1,6 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from weasyprint import HTML
+#from weasyprint import HTML
 import requests
 template_env = Environment(
     loader=FileSystemLoader("templates"),
