@@ -112,13 +112,12 @@ def main():
     user_data["profile_image"] = st.file_uploader("Upload Profile Image", type=["jpg", "png", "jpeg"])
 
     if st.button("Generate Resume"):
+        
         rendered_resume = generate_resume(user_data)
-        #pdf_content = generate_pdf(rendered_resume)
-        # Load the HTML file
-        pdf = pdfkit.from_string(rendered_resume, False)
-        #pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
-        # Generate PDF
-        #html.write_pdf('generated_resume.pdf')
+        save_to_html(rendered_resume)
+        st.success("Resume generated successfully!")
+        with open('generated_resume.html', 'rb') as f:
+            st.download_button('Download resume', f, file_name='generated_resume.html')
         st.download_button(
         "⬇️ Download Resume",
         data=pdf,
