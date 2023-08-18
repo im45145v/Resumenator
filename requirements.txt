@@ -1,5 +1,5 @@
-streamlit
 jinja2
-pdfkit
 requests
 weasyprint
+pdfkit
+streamlit
