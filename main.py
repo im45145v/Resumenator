@@ -1,6 +1,6 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-import pdfkit
+from weasyprint import HTML
 import requests
 template_env = Environment(
     loader=FileSystemLoader("templates"),
@@ -114,7 +114,11 @@ def main():
     if st.button("Generate Resume"):
         rendered_resume = generate_resume(user_data)
         #pdf_content = generate_pdf(rendered_resume)
-        pdfkit.from_string(rendered_resume, 'generated_resume.pdf')
+        # Load the HTML file
+        html = HTML(string=rendered_resume)
+
+        # Generate PDF
+        html.write_pdf('generated_resume.pdf')
         with open('generated_resume.pdf', 'rb') as f:
             st.download_button('Download resume', f, file_name='generated_resume.pdf')
 
