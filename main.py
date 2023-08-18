@@ -2,6 +2,7 @@ import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 #from weasyprint import HTML
 import requests
+import pdfkit
 template_env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml'])
