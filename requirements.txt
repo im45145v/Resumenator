@@ -2,3 +2,4 @@ streamlit
 jinja2
 pdfkit
 requests
+weasyprint
