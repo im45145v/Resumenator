@@ -115,8 +115,7 @@ def main():
         rendered_resume = generate_resume(user_data)
         #pdf_content = generate_pdf(rendered_resume)
         # Load the HTML file
-        html = HTML(string=rendered_resume)
-        pdf = pdfkit.from_string(html, False)
+        pdf = pdfkit.from_string(rendered_resume, False)
         # Generate PDF
         #html.write_pdf('generated_resume.pdf')
         #with open('generated_resume.pdf', 'rb') as f:
