@@ -116,11 +116,14 @@ def main():
         #pdf_content = generate_pdf(rendered_resume)
         # Load the HTML file
         #pdf = pdfkit.from_string(rendered_resume, False)
-        #pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
+        pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
         # Generate PDF
         #html.write_pdf('generated_resume.pdf')
-        #with open('generated_resume.pdf', 'rb') as f:
-            #st.download_button('Download resume', f, file_name='generated_resume.pdf')
-
+        st.download_button(
+        "⬇️ Download Resume",
+        data=pdf,
+        file_name="Resume.pdf",
+        mime="application/octet-stream",
+    )
 if __name__ == "__main__":
     main()
