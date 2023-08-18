@@ -116,8 +116,10 @@ def main():
         rendered_resume = generate_resume(user_data)
         save_to_html(rendered_resume)
         st.success("Resume generated successfully!")
-        with open('generated_resume.html', 'rb') as f:
-            st.download_button('Download resume', f, file_name='generated_resume.html')
+        pdfkit.from_file("generated_resume.html", "generated_resume.pdf")
+        with open('generated_resume.pdf', 'rb') as f:
+            st.download_button('Download resume', f, file_name='generated_resume.pdf')
+        
         
 if __name__ == "__main__":
     main()
