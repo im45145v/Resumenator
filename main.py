@@ -118,11 +118,6 @@ def main():
         st.success("Resume generated successfully!")
         with open('generated_resume.html', 'rb') as f:
             st.download_button('Download resume', f, file_name='generated_resume.html')
-        st.download_button(
-        "⬇️ Download Resume",
-        data=pdf,
-        file_name="Resume.pdf",
-        mime="application/octet-stream",
-    )
+        
 if __name__ == "__main__":
     main()
