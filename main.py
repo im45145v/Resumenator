@@ -115,8 +115,8 @@ def main():
         rendered_resume = generate_resume(user_data)
         #pdf_content = generate_pdf(rendered_resume)
         # Load the HTML file
-        #pdf = pdfkit.from_string(rendered_resume, False)
-        pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
+        pdf = pdfkit.from_string(rendered_resume, False)
+        #pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
         # Generate PDF
         #html.write_pdf('generated_resume.pdf')
         st.download_button(
