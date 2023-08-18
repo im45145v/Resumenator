@@ -2,6 +2,7 @@ import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import requests
 import pdfkit
+import base64
 template_env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml'])
@@ -116,7 +117,8 @@ def main():
         rendered_resume = generate_resume(user_data)
         save_to_html(rendered_resume)
         st.success("Resume generated successfully!")
-        pdfkit.from_file("generated_resume.html", "generated_resume.pdf")
+        url = f"data:text/html;charset=UTF-8;base64,{base64.b64encode(rendered_resume.encode()).decode()}"
+        pdfkit.from_url(str(url), 'generated_resume.pdf')
         with open('generated_resume.pdf', 'rb') as f:
             st.download_button('Download resume', f, file_name='generated_resume.pdf')
         
