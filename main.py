@@ -1,6 +1,5 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-#from weasyprint import HTML
 import requests
 import pdfkit
 template_env = Environment(
@@ -116,7 +115,8 @@ def main():
         rendered_resume = generate_resume(user_data)
         #pdf_content = generate_pdf(rendered_resume)
         # Load the HTML file
-        pdf = pdfkit.from_string(rendered_resume, False)
+        #pdf = pdfkit.from_string(rendered_resume, False)
+        #pdf = pdfkit.from_string("<h1>My First Heading</h1>", False)
         # Generate PDF
         #html.write_pdf('generated_resume.pdf')
         #with open('generated_resume.pdf', 'rb') as f:
