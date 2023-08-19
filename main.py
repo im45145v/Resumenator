@@ -1,6 +1,7 @@
 import streamlit as st
 import base64
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+import base64
 template_env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml'])
@@ -87,12 +88,10 @@ def main():
     for i in range(num_tools):
         user_data["Tool"].append(st.text_input(f"Tool {i + 1}"))
     uploaded_image = st.file_uploader("Upload Profile Image", type=["jpg", "jpeg", "png"])
-
     if uploaded_image is not None:
-        image_filename = uploaded_image.name
-        user_data["ProfileImage"] = image_filename
-        with open(image_filename, "wb") as f:
-            f.write(uploaded_image.read())
+        image_data = uploaded_image.read()
+        encoded_image = base64.b64encode(image_data).decode("utf-8")
+        user_data["ProfileImage"] = encoded_image
 
     if st.button("Generate Resume"):
         resume = generate_resume(user_data)
