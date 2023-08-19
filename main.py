@@ -1,8 +1,6 @@
 import streamlit as st
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-import requests
-import pdfkit
 import base64
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 template_env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml'])
@@ -14,27 +12,6 @@ def generate_resume(user_data):
 def save_to_html(html_content):
     with open("generated_resume.html", "w") as html_file:
         html_file.write(html_content)
-def generate_pdf(html_content):
-    response = requests.post("https://pdfconvert.onrender.com/generate_pdf", data={"html_content": html_content})
-    if response.status_code == 200:
-        return response.content  # Return the PDF content
-    else:
-        return None
-
-
-def convert_html_to_pdf(html_content, output_filename):
-    try:
-        options = {
-            'page-size': 'A4',
-            'encoding': 'UTF-8',
-        }
-
-        # Convert HTML content to PDF using pdfkit and wkhtmltopdf
-        pdfkit.from_string(html_content, output_filename, options=options)
-
-        return output_filename
-    except Exception as e:
-        return str(e)
 def main():
     st.title("Resume Generator")
     user_data = {
@@ -109,21 +86,19 @@ def main():
     num_tools = st.number_input("Number of Tools to Add", min_value=0, step=1, value=0)
     for i in range(num_tools):
         user_data["Tool"].append(st.text_input(f"Tool {i + 1}"))
+    uploaded_image = st.file_uploader("Upload Profile Image", type=["jpg", "jpeg", "png"])
 
-    user_data["profile_image"] = st.file_uploader("Upload Profile Image", type=["jpg", "png", "jpeg"])
+    if uploaded_image is not None:
+        image_filename = uploaded_image.name
+        user_data["ProfileImage"] = image_filename
+        with open(image_filename, "wb") as f:
+            f.write(uploaded_image.read())
 
     if st.button("Generate Resume"):
-        
-        rendered_resume = generate_resume(user_data)
-        save_to_html(rendered_resume)
+        resume = generate_resume(user_data)
+        save_to_html(resume)
         st.success("Resume generated successfully!")
-        #url = f"data:text/html;charset=UTF-8;base64,{base64.b64encode(rendered_resume.encode()).decode()}"
-        #pdfkit.from_url(str(url), 'generated_resume.pdf')
-        #with open('generated_resume.pdf', 'rb') as f:
-            #st.download_button('Download resume', f, file_name='generated_resume.pdf')
         with open('generated_resume.html', 'rb') as f:
             st.download_button('Download resume', f, file_name='generated_resume.html')
-        
-        
 if __name__ == "__main__":
     main()
