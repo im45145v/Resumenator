@@ -67,6 +67,7 @@ def temp1() :
         resume = generate_resume(user_data)
         save_to_html(resume)
         st.success("Resume generated successfully!")
+        st.balloons()
         # Add a download button
         with open('Resume.html', 'rb') as f:
             st.download_button('Download resume', f, file_name='Resume.html')
