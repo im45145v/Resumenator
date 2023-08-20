@@ -95,5 +95,6 @@ def temp2():
         resume = generate_resume(user_data)
         save_to_html(resume)
         st.success("Portfolio generated successfully!")
+        st.balloons()
         with open('Portfolio.html', 'rb') as f:
             st.download_button('Download resume', f, file_name='Portfolio.html')
