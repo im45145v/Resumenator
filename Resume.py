@@ -1,5 +1,7 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+import pdfkit
+
 # Load Jinja environment with the template folder
 def temp1() :
     template_env = Environment(
@@ -66,8 +68,9 @@ def temp1() :
     if st.button("Generate Resume"):
         resume = generate_resume(user_data)
         save_to_html(resume)
+        pdfkit.from_file("Resume.html", "Resume.pdf")
         st.success("Resume generated successfully!")
         st.balloons()
         # Add a download button
-        with open('Resume.html', 'rb') as f:
-            st.download_button('Download resume', f, file_name='Resume.html')
+        with open('Resume.pdf', 'rb') as f:
+            st.download_button('Download resume', f, file_name='Resume.pdf')
