@@ -74,3 +74,5 @@ def temp1() :
         # Add a download button
         with open('Resume.pdf', 'rb') as f:
             st.download_button('Download resume', f, file_name='Resume.pdf')
+        with open('Resume.html', 'rb') as f:
+            st.download_button('Download resume(HTML)', f, file_name='Resume.html')
