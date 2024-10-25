@@ -1,78 +1,80 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import pdfkit
+import json
 
 # Load Jinja environment with the template folder
-def temp1() :
+def temp1(user_data=None):
     template_env = Environment(
         loader=FileSystemLoader("templates"),
         autoescape=select_autoescape(['html', 'xml'])
     )
+    
     def generate_resume(user_data):
         template = template_env.get_template("ResumeTemplate.html")
         rendered_html = template.render(data=user_data)
         return rendered_html
+    
     def save_to_html(html_content):
         with open("Resume.html", "w") as html_file:
             html_file.write(html_content)
 
-    user_data1 = {'Inst':[],'Proj':[]}
-    st.title("Resume Generator")
-    # Input fields for user data
-    name = st.text_input("Name")
-    email = st.text_input("Email")
-    phone = st.text_input("Phone")
-    a=st.columns([1,2])
-    with a[0]: 
-        number_inputs = st.number_input('Number of Degrees',min_value=1, max_value=10)
-    for i in range(number_inputs):
-        st.write(f"Institute {i + 1}")
-        cols = st.columns(4)  # Divide row into 4 columns
-        Inst_data = {
-            "Institutename": cols[0].text_input(f"Institution Name", key=f"Institute_name{i}"),
-            "Degreetype": cols[1].text_input(f"Degree type", key=f"Degree_type{i}"),
-            "Degreeperiod": cols[2].text_input(f"Degree period", key=f"Degree_period{i}"),
-            "cgpa": cols[3].text_input(f"Percentage / CGPA", key=f"cgpa_{i}"),
-        }
-        user_data1['Inst'].append(Inst_data)
-    b = st.columns([1,2])
-    with b[0]: 
-        number_inputs1 = st.number_input('Number of Projects',min_value=1, max_value=10)        
-    for i in range(number_inputs1):
-        st.write(f"Projects {i + 1}")
-        cols = st.columns(3)  # Divide row into 3 columns
-        Project_data = {
-            "ProjectName": cols[0].text_input(f"Project Name", key=f"project_name{i}"),
-            "ProjectDesc": cols[1].text_input(f"Project Description", key=f"Project_desc{i}"),
-            "ProjectStack": cols[2].text_input(f"Tech Stack used", key=f"tech_stacks{i}"),
-        }
-        user_data1['Proj'].append(Project_data)
-    achivements = st.text_input('Achivements (seperate with , )')
-    result_ach = achivements.split(',')
-    prog_lan = st.text_input("Programming Languages you know (seperate with , )")
-    result_pro = prog_lan.split(',')
-    tools = st.text_input("Tools Used till now (seperate with , )")
-    result_tools = tools.split(',')
-    user_data = {
-        "Name": name,
-        "Email": email,
-        "Phone": phone,
-        "ProgLang": result_pro,
-        "Tools": result_tools,
-        "Achievement": result_ach,
-        "GithubID": st.text_input("Github ID"),
-        "LinkedinID": st.text_input("Linkedin ID"),
-        "HackerRankID": st.text_input("HackerRank ID")
-    }
-    user_data.update(user_data1)
-    if st.button("Generate Resume"):
-        resume = generate_resume(user_data)
-        save_to_html(resume)
-        pdfkit.from_file("Resume.html", "Resume.pdf")
-        st.success("Resume generated successfully!")
-        st.balloons()
-        # Add a download button
-        with open('Resume.pdf', 'rb') as f:
-            st.download_button('Download resume', f, file_name='Resume.pdf')
-        with open('Resume.html', 'rb') as f:
-            st.download_button('Download resume(HTML)', f, file_name='Resume.html')
+    if user_data is None:
+        st.title("Resume Generator")
+        with open("user_data_resume.json", "r") as json_file:
+            user_data = json.load(json_file)
+        
+        st.subheader("Personal Information")
+        st.write(f"Name: {user_data.get('Name', '')}")
+        st.write(f"Email: {user_data.get('Email', '')}")
+        st.write(f"Phone: {user_data.get('Phone', '')}")
+        st.write(f"Github ID: {user_data.get('GithubID', '')}")
+        st.write(f"Linkedin ID: {user_data.get('LinkedinID', '')}")
+        st.write(f"HackerRank ID: {user_data.get('HackerRankID', '')}")
+
+        st.subheader("Institutions")
+        for inst in user_data.get("Inst", []):
+            st.write(f"Institution Name: {inst.get('Institutename', '')}")
+            st.write(f"Degree Type: {inst.get('Degreetype', '')}")
+            st.write(f"Degree Period: {inst.get('Degreeperiod', '')}")
+            st.write(f"CGPA: {inst.get('cgpa', '')}")
+
+        st.subheader("Projects")
+        for project in user_data.get("Proj", []):
+            st.write(f"Project Name: {project.get('ProjectName', '')}")
+            st.write(f"Project Description: {project.get('ProjectDesc', '')}")
+            st.write(f"Tech Stack: {project.get('ProjectStack', '')}")
+
+        st.subheader("Achievements")
+        for achievement in user_data.get("Achievement", []):
+            st.write(f"Achievement: {achievement}")
+
+        st.subheader("Programming Languages")
+        for pl in user_data.get("ProgLang", []):
+            st.write(f"Programming Language: {pl}")
+
+        st.subheader("Tools")
+        for tool in user_data.get("Tools", []):
+            st.write(f"Tool: {tool}")
+
+        if st.button("Generate Resume"):
+            resume = generate_resume(user_data)
+            save_to_html(resume)
+            pdfkit.from_file("Resume.html", "Resume.pdf")
+            st.success("Resume generated successfully!")
+            st.balloons()
+            with open('Resume.pdf', 'rb') as f:
+                st.download_button('Download resume', f, file_name='Resume.pdf')
+            with open('Resume.html', 'rb') as f:
+                st.download_button('Download resume(HTML)', f, file_name='Resume.html')
+    else:
+        if st.button("Generate Resume"):
+            resume = generate_resume(user_data)
+            save_to_html(resume)
+            pdfkit.from_file("Resume.html", "Resume.pdf")
+            st.success("Resume generated successfully!")
+            st.balloons()
+            with open('Resume.pdf', 'rb') as f:
+                st.download_button('Download resume', f, file_name='Resume.pdf')
+            with open('Resume.html', 'rb') as f:
+                st.download_button('Download resume(HTML)', f, file_name='Resume.html')

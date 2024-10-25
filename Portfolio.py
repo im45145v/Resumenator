@@ -1,100 +1,91 @@
 import streamlit as st
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import base64
+import json
+
 template_env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml'])
 )
+
 def generate_resume(user_data):
     template = template_env.get_template("PortfolioTemplate.html")
     rendered_html = template.render(data=user_data)
     return rendered_html
+
 def save_to_html(html_content):
     with open("Portfolio.html", "w") as html_file:
         html_file.write(html_content)
-def temp2():
-    st.title("Portfolio Generator")
-    user_data = {
-        "Companies": [],
-        "Skills": [],
-        "Hobbies": [],
-        "Education": [],
-        "Projects":[],
-        "Ach":[],
-        "PL":[],
-        "Tool":[]
-    }
-    st.subheader("Personal Information")
-    cols1, cols2 = st.columns(2)
-    user_data["Name"] = cols1.text_input("Name")
-    user_data["Call"] = cols1.text_input("Call")
-    user_data["Mail"] = cols1.text_input("Mail")
-    user_data["Website"] = cols1.text_input("Website")
-    user_data["Home"] = cols2.text_input("Home")
-    user_data["TwitterID"] = cols2.text_input("Twitter ID")
-    user_data["LinkedinID"] = cols2.text_input("Linkedin ID")
-    user_data["GithubID"] = cols2.text_input("Github ID")
-    user_data["Bio"] = st.text_area("Bio", height=200)  # Increase the text area height
-    num_companies = st.number_input("Number of Companies to Add", min_value=0, step=1)
-    for i in range(num_companies):
-        st.write(f"Company {i + 1}")
-        cols = st.columns(4)  # Divide row into 4 columns
-        company_data = {
-            "CompanyName": cols[0].text_input(f"Company Name", key=f"company_name_{i}"),
-            "CompanyPeriod": cols[1].text_input(f"Company Period", key=f"company_period_{i}"),
-            "CompanyRole": cols[2].text_input(f"Company Role", key=f"company_role_{i}"),
-            "WorkDetails": cols[3].text_input(f"Work Details", key=f"work_details_{i}"),
-        }
-        user_data["Companies"].append(company_data)
 
-    num_Education = st.number_input("Education Data", min_value=0, step=1)
-    for i in range(num_Education):
-        st.write(f"Education Institute {i + 1}")
-        cols = st.columns(4)  # Divide row into 4 columns
-        Education_data = {
-            "SchoolName": cols[0].text_input(f"School Name", key=f"SchoolName{i}"),
-            "StudyPeriod": cols[1].text_input(f"Study period", key=f"StudyPeriod{i}"),
-            "CourseName": cols[2].text_input(f"course Name", key=f"CourseName{i}"),
-            "GPA": cols[3].text_input(f"GPA", key=f"GPA{i}"),
-        }
-        user_data["Education"].append(Education_data)
+def temp2(user_data=None):
+    if user_data is None:
+        st.title("Portfolio Generator")
+        with open("user_data.json", "r") as json_file:
+            user_data = json.load(json_file)
+        
+        st.subheader("Personal Information")
+        st.write(f"Name: {user_data.get('Name', '')}")
+        st.write(f"Call: {user_data.get('Call', '')}")
+        st.write(f"Mail: {user_data.get('Mail', '')}")
+        st.write(f"Website: {user_data.get('Website', '')}")
+        st.write(f"Home: {user_data.get('Home', '')}")
+        st.write(f"Twitter ID: {user_data.get('TwitterID', '')}")
+        st.write(f"Linkedin ID: {user_data.get('LinkedinID', '')}")
+        st.write(f"Github ID: {user_data.get('GithubID', '')}")
+        st.write(f"Bio: {user_data.get('Bio', '')}")
 
-    num_Projects = st.number_input("Projects Data", min_value=0, step=1)
-    for i in range(num_Projects):
-        st.write(f"Project {i + 1}")
-        cols = st.columns(2)  # Divide row into 4 columns
-        Projects_data = {
-            "ProjectName": cols[0].text_input(f"Project Name", key=f"Project_Name{i}"),
-            "Techstacks": cols[1].text_input(f"Techstacks", key=f"ProjectName{i}"),
-            "PDescription": st.text_area(f"Project Description", height=200,key=f"PDescription{i}"),
-        }
-        user_data["Projects"].append(Projects_data)
+        st.subheader("Companies")
+        for company in user_data.get("Companies", []):
+            st.write(f"Company Name: {company.get('CompanyName', '')}")
+            st.write(f"Company Period: {company.get('CompanyPeriod', '')}")
+            st.write(f"Company Role: {company.get('CompanyRole', '')}")
+            st.write(f"Work Details: {company.get('WorkDetails', '')}")
 
+        st.subheader("Education")
+        for education in user_data.get("Education", []):
+            st.write(f"School Name: {education.get('SchoolName', '')}")
+            st.write(f"Study Period: {education.get('StudyPeriod', '')}")
+            st.write(f"Course Name: {education.get('CourseName', '')}")
+            st.write(f"GPA: {education.get('GPA', '')}")
 
-    num_skills = st.number_input("Number of Skills to Add", min_value=0, step=1, value=0)
-    for i in range(num_skills):
-        user_data["Skills"].append(st.text_input(f"Skill {i + 1}"))
-    num_hobbies = st.number_input("Number of Hobbies to Add", min_value=0, step=1, value=0)
-    for i in range(num_hobbies):
-        user_data["Hobbies"].append(st.text_input(f"Hobby {i + 1}"))
-    num_Ach = st.number_input("Number of Achievements to Add", min_value=0, step=1, value=0)
-    for i in range(num_Ach):
-        user_data["Ach"].append(st.text_input(f"Achievement {i + 1}"))
-    ProgrammingLangs = st.number_input("Number of Programming Languages to Add", min_value=0, step=1, value=0)
-    for i in range(ProgrammingLangs):
-        user_data["PL"].append(st.text_input(f"Programming Lang {i + 1}"))
-    num_tools = st.number_input("Number of Tools to Add", min_value=0, step=1, value=0)
-    for i in range(num_tools):
-        user_data["Tool"].append(st.text_input(f"Tool {i + 1}"))
-    uploaded_image = st.file_uploader("Upload Profile Image", type=["jpg", "jpeg", "png"])
-    if uploaded_image is not None:
-        image_data = uploaded_image.read()
-        encoded_image = base64.b64encode(image_data).decode("utf-8")
-        user_data["ProfileImage"] = encoded_image
-    if st.button("Generate Resume"):
-        resume = generate_resume(user_data)
-        save_to_html(resume)
-        st.success("Portfolio generated successfully!")
-        st.balloons()
-        with open('Portfolio.html', 'rb') as f:
-            st.download_button('Download resume', f, file_name='Portfolio.html')
+        st.subheader("Projects")
+        for project in user_data.get("Projects", []):
+            st.write(f"Project Name: {project.get('ProjectName', '')}")
+            st.write(f"Tech Stacks: {project.get('TechStacks', '')}")
+            st.write(f"Project Description: {project.get('ProjectDescription', '')}")
+
+        st.subheader("Skills")
+        for skill in user_data.get("Skills", []):
+            st.write(f"Skill: {skill}")
+
+        st.subheader("Hobbies")
+        for hobby in user_data.get("Hobbies", []):
+            st.write(f"Hobby: {hobby}")
+
+        st.subheader("Achievements")
+        for achievement in user_data.get("Achievements", []):
+            st.write(f"Achievement: {achievement}")
+
+        st.subheader("Programming Languages")
+        for pl in user_data.get("ProgrammingLanguages", []):
+            st.write(f"Programming Language: {pl}")
+
+        st.subheader("Tools")
+        for tool in user_data.get("Tools", []):
+            st.write(f"Tool: {tool}")
+
+        if st.button("Generate Portfolio"):
+            resume = generate_resume(user_data)
+            save_to_html(resume)
+            st.success("Portfolio generated successfully!")
+            st.balloons()
+            with open('Portfolio.html', 'rb') as f:
+                st.download_button('Download portfolio', f, file_name='Portfolio.html')
+    else:
+        if st.button("Generate Portfolio"):
+            resume = generate_resume(user_data)
+            save_to_html(resume)
+            st.success("Portfolio generated successfully!")
+            st.balloons()
+            with open('Portfolio.html', 'rb') as f:
+                st.download_button('Download portfolio', f, file_name='Portfolio.html')
